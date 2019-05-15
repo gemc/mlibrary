@@ -5,4 +5,4 @@
 - consistency check for option multiple values. Add possible values enum?
 - add units, and getNumber
 - add option to print default settings as well as user settings
-
+- add ISENABLE computed property to check if option is enabled instead of putting "no" or "na"
