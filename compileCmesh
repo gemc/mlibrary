@@ -1,5 +1,10 @@
 #!/bin/csh -f
 
+# making sure we're using the right compiler
+setenv CC gcc
+setenv CXX g++
+
+
 rm -rf cadmeshBuild
 mkdir cadmeshBuild
 cd cadmeshBuild
