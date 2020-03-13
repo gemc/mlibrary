@@ -8,9 +8,6 @@ using namespace std;
 
 enum GType { readout, flux, counter };
 
-// number of bits to define a hit.
-// it is defined here because both gdynamic and ghit requires it
-#define NHITBITS 6
 
 class GTouchable
 {

@@ -14,6 +14,10 @@
 // c++
 #include <bitset>
 
+// number of bits to define a hit.
+// it is defined here because both gdynamic and ghit requires it
+#define NHITBITS 6
+
 // GHIT Bitset:
 //
 // 1st bit: energy deposited, time

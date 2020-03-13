@@ -55,7 +55,6 @@ private:
 	// mirrors
 	string       mirror;
 
-	// defined in utilities
 	friend ostream &operator<<(ostream &stream, GVolume); ///< Logs infos on screen.
 
 public:
