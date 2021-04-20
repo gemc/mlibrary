@@ -1,2 +1,0 @@
-# gsplash library
-
