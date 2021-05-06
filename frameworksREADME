@@ -1,23 +1,8 @@
-April 12 2018
--------------
-
-Create project:
----------------
-
-0. If re-starting a project, rename the old one to *O.xcodeproj to keep sources list and libraries needed
-1. Start with with  Cross-platform Empty project: "COMMAND-SHIFT-N". Do no create local git repos.
-2. Close it. Move the project from  its own dir created to one dir up. Delete dir.
-3. Add all the files (make sure to do scons -c to avoid including objects). Added folders: Create groups (create folder reference won't let add sources later)
 
 
 Add Sources and Libraries
 -------------------------
 
- 1. On the general project add "settings.xcconfig" configuration for debug and release
-
- 2. Add macos Library target "libraryName". Static STLC++ to archive the executable. Organization Identifier: mlibrary
-    a. remove libraryName directoy
-    b. add source libraryName.cc in Compile Sources "Build Phases"
 
  3. Open Framework and library dir of interest
 
@@ -121,7 +106,10 @@ Order of projects
 17. gfields
 
 
+SHARED SCHEME:
 
+Shared: Shared schemes are stored in <.xcodeproj or .xcworkspace file>/xcshareddata/xcschemes/. A shared scheme is visible to all users of a project or workspace file.
+We do not need it at the moment.
 
 
 
