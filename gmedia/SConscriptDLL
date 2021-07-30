@@ -17,15 +17,6 @@ else:
 env.Append(LIBS = ['gdata'])
 env.Append(LIBS = ['gmedia'])
 
-txtSources = Split(
-	"""
-	factories/txt/gmediaTxtFactory.cc
-	factories/txt/connection.cc
-	factories/txt/event.cc
-	factories/txt/publishHeader.cc
-	factories/txt/publishDetectorDigiObservables.cc
-	factories/txt/publishDetectorTrueObservables.cc
-	""")
 
 rootSources = Split(
 	"""
@@ -38,13 +29,6 @@ rootSources = Split(
 		factories/root/publishDetectorDigiObservables.cc
 		factories/root/publishDetectorTrueObservables.cc
 	""")
-
-
-# standard pre and suffix for gemc plugins
-env.Replace(SHLIBSUFFIX = ".gplugin")
-env.Replace(SHLIBPREFIX = "")
-
-txt_dll  = env.SharedLibrary( source = txtSources,  target = "../lib/txtGMedia")
 
 if os.path.exists(ROOTSYS):
 	print ("ROOTSYS environment Found, compiling rootGMedia plugin")
