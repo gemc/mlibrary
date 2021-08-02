@@ -1,2 +1,0 @@
-# textProgressBar library
-
