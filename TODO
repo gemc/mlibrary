@@ -1,5 +1,0 @@
-- Change each README to documentation in each library
-- Move todo to notes inside each dir. Template: gvolume
-- complete the export env in the scons build system
-- ADD THREAD TYPE At the top of each class definitions, see gMapCoordinates.h
-

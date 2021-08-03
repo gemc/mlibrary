@@ -15,6 +15,5 @@ translationTable    = SConscript('translationTable/SConscript')
 splash              = SConscript('splash/SConscript')
 frequencySyncSignal = SConscript('frequencySyncSignal/SConscript')
 gstring             = SConscript('gstring/SConscript')
-qtButtonsWidget     = SConscript('qtButtonsWidget/SConscript')
 
 

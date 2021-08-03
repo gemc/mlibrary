@@ -1,4 +1,0 @@
-from init_env import init_environment
-
-env = init_environment("qt5")
-lib = env.Library(source = "qtButtonsWidget.cc", target = "../lib/qtButtonsWidget")
