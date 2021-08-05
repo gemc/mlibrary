@@ -1,2 +1,0 @@
-# g4display library
-

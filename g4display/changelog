@@ -1,9 +1,0 @@
-3/13/18
-- passing env to sconscript
-- better scons documentation
-
-11/7/17
-- added GOPTIONITEM symbol to standardize goption help list
-
-7/6/17
-- added slot for camera direction.
