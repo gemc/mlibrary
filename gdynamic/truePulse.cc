@@ -1,3 +1,0 @@
-// gdynamic
-#include "gdynamic.h"
-

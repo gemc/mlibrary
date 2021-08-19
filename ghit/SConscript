@@ -1,9 +1,0 @@
-Import('env')
-
-sources = Split("""
-    ghit.cc
-    buildHitInfos.cc
-	calculations.cc
-    """)
-
-lib = env.Library(source = sources, target = "../lib/ghit")

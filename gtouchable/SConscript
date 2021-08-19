@@ -1,4 +1,0 @@
-from init_env import init_environment
-
-env = init_environment("mlibrary qt5 geant4 clhep")
-lib = env.Library(source = "gtouchable.cc", target = "../lib/gtouchable")

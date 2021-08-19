@@ -1,8 +1,0 @@
-Import('env')
-
-sources = Split("""
-	trueObservable.cc
-	truePulse.cc
-	""")
-
-lib = env.Library(source = sources, target = "../lib/gdynamic")

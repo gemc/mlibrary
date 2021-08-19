@@ -12,7 +12,6 @@ env = init_environment("mlibrary qt5 clhep geant4")
 options             = SConscript('options/SConscript')
 textProgressBar     = SConscript('textProgressBar/SConscript')
 translationTable    = SConscript('translationTable/SConscript')
-splash              = SConscript('splash/SConscript')
 frequencySyncSignal = SConscript('frequencySyncSignal/SConscript')
 gstring             = SConscript('gstring/SConscript')
 

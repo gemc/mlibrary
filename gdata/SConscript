@@ -1,9 +1,0 @@
-Import('env')
-
-sources = Split("""
-	gdata.cc
-	observables/gobservables.cc
-	""")
-
-lib  = env.Library(source = sources, target = "../lib/gdata")
-
