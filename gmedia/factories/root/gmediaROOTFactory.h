@@ -1,12 +1,4 @@
-#ifndef GMEDIAROOTFACTORY_H
-#define GMEDIAROOTFACTORY_H 1
 
-// gmedia
-#include "gmedia.h"
-#include "gRootTree.h"
-
-// ROOT
-#include "TFile.h"
 
 #define DIGITNAMESUFFIX 
 

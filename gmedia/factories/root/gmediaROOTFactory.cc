@@ -6,7 +6,6 @@ GRootTree* GMediaROOTFactory::getHeaderGRootTree()
 	// tree not found, initializing it
 	if(gRootTrees->find("header") == gRootTrees->end()) {
 		(*gRootTrees)["header"] = new GRootTree();
-		
 	}
 	
 	// return initialized tree
