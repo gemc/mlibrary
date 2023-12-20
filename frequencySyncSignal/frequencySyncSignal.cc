@@ -12,14 +12,21 @@ using namespace gstring;
 
 
 // building first RF from the start time
-oneRFOutput::oneRFOutput(double timeWindow, double startTime, double radioPeriod, int rfBunchGap)
+oneRFOutput::oneRFOutput(int seed, double timeWindow, double startTime, double radioPeriod, int rfBunchGap)
 {
+
+
 	// generating random number between -timeWindow and timeWindow
 	random_device randomDevice;
-	mt19937 generator(randomDevice());
+    mt19937 generator(randomDevice());
+
+    if(seed != -1) {
+        generator.seed(seed);
+    }
+
 	uniform_real_distribution<> randomDistribution(-timeWindow/radioPeriod, timeWindow/radioPeriod);
 
-	// very first RF time
+    // very first RF time
 	double firstRF = startTime + radioPeriod*(int)randomDistribution(generator);
 
 	// making sure the first RF is within the timewindow
@@ -38,8 +45,7 @@ oneRFOutput::oneRFOutput(double oneRFValue, double rfsDistance, double timeWindo
 	double firstRF = oneRFValue - rfsDistance;
 
 	// if that doesn't work, going forward
-	if(firstRF < 0 || firstRF > timeWindow)
-		 firstRF = oneRFValue + rfsDistance;
+	if(firstRF < 0 || firstRF > timeWindow) { firstRF = oneRFValue + rfsDistance; }
 
 	// if that didn't work either, the distance between RFs is too big
 	if(firstRF < 0 || firstRF > timeWindow) {
@@ -89,6 +95,7 @@ ostream &operator<<(ostream &stream, oneRFOutput s)
 //! overloading "<<" to print this class
 ostream &operator<<(ostream &stream, FrequencySyncSignal s)
 {
+    stream << " Seed: "   << s.seed;
 	stream << " Time Window: "   << s.timeWindow;
 	stream << ", event Start Time: "   << s.startTime << endl;
 	stream << " Radio Frequency: "   << s.radioFrequency << " MHz: Period is " << s.radioPeriod << "ns" << endl;
@@ -109,8 +116,7 @@ ostream &operator<<(ostream &stream, FrequencySyncSignal s)
 
 FrequencySyncSignal::FrequencySyncSignal(string setup)
 {
-
-	unsigned long minNumberOfArguments = 4;
+	unsigned long minNumberOfArguments = 5;
 
 	// setup is a string with at least minNumberOfArguments entries.
 	// any entry after that will add an additional RFOutput
@@ -118,23 +124,25 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 	if(parsedSetup.size() < minNumberOfArguments) {
 		cout << " !! Error: FrequencySyncSignal initializer incomplete: >" << setup << "< has not enough parameters, at least "
 		<<  minNumberOfArguments << " needed. Exiting" << endl;
-		exit(0);
+		exit(1);
 	}
 
-	timeWindow     = stod(parsedSetup[0]);
-	startTime      = stod(parsedSetup[1]);
-	radioFrequency = stod(parsedSetup[2]);
+    seed           = stoi(parsedSetup[0]);
+	timeWindow     = stod(parsedSetup[1]);
+	startTime      = stod(parsedSetup[2]);
+	radioFrequency = stod(parsedSetup[3]);
 	radioPeriod    = 1.0/radioFrequency; // GHz > ns
-	rfBunchGap     = stoi(parsedSetup[3]);
+	rfBunchGap     = stoi(parsedSetup[4]);
 
 
 	// do nothing if timewindow is 0
-	if(timeWindow ==0) {
+	if(timeWindow == 0) {
 		cout << " ! Warning: timewindow is set to 0. No RF output." << endl;
 		return;
 	}
-	// first RF
-	output.push_back(oneRFOutput(timeWindow, startTime, radioPeriod, rfBunchGap));
+
+	// first RF: use seed
+	output.push_back(oneRFOutput(seed, timeWindow, startTime, radioPeriod, rfBunchGap));
 
 	// other signals
 	if(parsedSetup.size() > minNumberOfArguments) {
@@ -149,19 +157,3 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
