@@ -43,6 +43,7 @@ else()
     ExternalProject_Add(
         tetgen_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
+        GIT_REPOSITORY https://github.com/christopherpoole/tetgen.git
         CMAKE_ARGS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
     include_directories(${PROJECT_BINARY_DIR}/include)
