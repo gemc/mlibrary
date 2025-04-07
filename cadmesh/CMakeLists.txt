@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
 project(cadmesh)
 
@@ -43,8 +43,7 @@ else()
     ExternalProject_Add(
         tetgen_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
-        GIT_REPOSITORY https://github.com/christopherpoole/tetgen.git
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
+        CMAKE_ARGS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
     include_directories(${PROJECT_BINARY_DIR}/include)
 endif()
@@ -58,8 +57,8 @@ else()
         assimp_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
-        GIT_TAG v3.1.1
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
+        GIT_TAG v5.4.3
+        CMAKE_ARGS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
 endif()
