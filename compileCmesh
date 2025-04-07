@@ -8,16 +8,14 @@ rm -rf cadmeshBuild
 mkdir cadmeshBuild
 cd cadmeshBuild
 
+
 # setting
-set ncpu = $(getconf _NPROCESSORS_ONLN)
+set ncpu = `getconf _NPROCESSORS_ONLN`
 set opt = " -j"$ncpu" "
 
 echo
 echo Compiling with options $opt
 echo
-
-# in Geant4 10.7.4 in order to compile mlibrary I had to comment out line 22 in Geant4PackageCache.cmake:
-sed -i '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' $G4INSTALL/lib/Geant4-$G4_VERSION/Geant4PackageCache.cmake
 
 case $( uname -s) in
 	Linux)
