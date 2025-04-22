@@ -64,6 +64,8 @@ else()
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
 endif()
 
+# copy cadmeshBuild/lib64
+
 # CADMesh
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
@@ -85,6 +87,7 @@ endif()
 if(${WITH_SYS_ASSIMP} MATCHES "OFF")
     add_dependencies(cadmesh assimp_external)
     target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib assimp)
+    target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib64 assimp)
 else()
     target_link_libraries(cadmesh assimp)
 endif()
