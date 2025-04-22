@@ -1,50 +1,46 @@
-#!/bin/csh -f
+#!/bin/zsh
 
-# making sure we're using the right compiler
-setenv CC gcc
-setenv CXX g++
+# Making sure we're using the right compiler
+export CC=gcc
+export CXX=g++
 
 rm -rf cadmeshBuild
 mkdir cadmeshBuild
 cd cadmeshBuild
 
-
-# setting
-set ncpu = `getconf _NPROCESSORS_ONLN`
-set opt = " -j"$ncpu" "
+# Setting
+ncpu=$(getconf _NPROCESSORS_ONLN)
+opt="-j$ncpu"
 
 echo
-echo Compiling with options $opt
+echo "Compiling with options $opt"
 echo
-
 
 # Determine the OS type
-set os_type = `uname -s`
+os_type=$(uname -s)
 
 # Switch based on the OS type
-switch ( $os_type )
-	case Linux:
-		echo "Patching ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake in linux using sed"
-		# Use GNU sed syntax for in-place editing
-		sed -i '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake
-		breaksw
-
-	case Darwin:
-		echo "Patching ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake in Darwin using /usr/bin/sed"
-		# Use BSD sed syntax for in-place editing (requires '' argument for -i)
-		/usr/bin/sed -i '' '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake
-		breaksw
-
-	default:
-		# Handle unsupported OS
-		echo "Unsupported OS: $os_type"
-		exit 1
-		# No breaksw needed for default or last case
-endsw
+case "$os_type" in
+  Linux)
+    echo "Patching ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake in Linux using sed"
+    [[ -f "${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake" ]] && \
+      sed -i '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' "${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake"
+    [[ -f "${G4INSTALL}/lib64/Geant4-${G4_VERSION}/Geant4PackageCache.cmake" ]] && \
+      sed -i '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' "${G4INSTALL}/lib64/Geant4-${G4_VERSION}/Geant4PackageCache.cmake"
+    ;;
+  Darwin)
+    echo "Patching ${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake in Darwin using /usr/bin/sed"
+    /usr/bin/sed -i '' '/geant4_set_and_check_package_variable(EXPAT_LIBRARY ""  "")/s/^/#/' "${G4INSTALL}/lib/Geant4-${G4_VERSION}/Geant4PackageCache.cmake"
+    ;;
+  *)
+    echo "Unsupported OS: $os_type"
+    exit 1
+    ;;
+esac
 
 # Optional: Indicate successful patching if script continues
 echo "Patching check complete."
 
 cmake ../cadmesh -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=$MLIBRARY
 make $opt install
-echo done
+echo "done"
