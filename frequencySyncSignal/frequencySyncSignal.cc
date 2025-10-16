@@ -12,9 +12,9 @@ using namespace gstring;
 
 
 // building first RF from the start time
-oneRFOutput::oneRFOutput(int seed, double timeWindow, double startTime, double radioPeriod, int rfBunchGap)
+oneRFOutput::oneRFOutput(int seed, double timeWindow, double startTime, double radioPeriod, double offset, int rfBunchGap)
 {
-
+	rfoffset = offset;
 
 	// generating random number between -timeWindow and timeWindow
 	random_device randomDevice;
@@ -27,25 +27,26 @@ oneRFOutput::oneRFOutput(int seed, double timeWindow, double startTime, double r
 	uniform_real_distribution<> randomDistribution(-timeWindow/radioPeriod, timeWindow/radioPeriod);
 
     // very first RF time
-	double firstRF = startTime + radioPeriod*(int)randomDistribution(generator);
+	double firstRF = startTime + offset + radioPeriod*(int)randomDistribution(generator);
 
 	// making sure the first RF is within the timewindow
-	while(firstRF<0 || firstRF>timeWindow)
-		firstRF = startTime + radioPeriod*(int)randomDistribution(generator);
+	while(firstRF<0 || firstRF>timeWindow) {
+		firstRF = startTime + offset + radioPeriod*(int)randomDistribution(generator);
+	}
 
 	// now filling the full signal
 	fillRFValues(firstRF, timeWindow, rfBunchGap*radioPeriod);
 }
 
 // building RF from existing RFs
-oneRFOutput::oneRFOutput(double oneRFValue, double rfsDistance, double timeWindow, double intervalBetweenBunches)
-{
+oneRFOutput::oneRFOutput(double oneRFValue, double rfsDistance, double timeWindow, double offset, double intervalBetweenBunches) {
 
+	rfoffset = offset;
 	// going backward in time by the distance
-	double firstRF = oneRFValue - rfsDistance;
+	double firstRF = oneRFValue - rfsDistance + offset;
 
 	// if that doesn't work, going forward
-	if(firstRF < 0 || firstRF > timeWindow) { firstRF = oneRFValue + rfsDistance; }
+	if(firstRF < 0 || firstRF > timeWindow) { firstRF = oneRFValue + rfsDistance  + offset; }
 
 	// if that didn't work either, the distance between RFs is too big
 	if(firstRF < 0 || firstRF > timeWindow) {
@@ -85,8 +86,7 @@ void oneRFOutput::fillRFValues(double firstRF, double timeWindow, double interva
 ostream &operator<<(ostream &stream, oneRFOutput s)
 {
 	for(unsigned j=0; j< s.rfID.size(); j++) {
-		stream << "  - RFID: "   << s.rfID[j] << "   RF Value: " << s.rfValue[j] << endl;
-
+		stream << "  - RFID: "   << s.rfID[j]  << "   RF offset: " << s.rfoffset << "   RF Value: " << s.rfValue[j] << endl;
 	}
 
 	return stream;
@@ -116,7 +116,7 @@ ostream &operator<<(ostream &stream, FrequencySyncSignal s)
 
 FrequencySyncSignal::FrequencySyncSignal(string setup)
 {
-	unsigned long minNumberOfArguments = 5;
+	unsigned long minNumberOfArguments = 6;
 
 	// setup is a string with at least minNumberOfArguments entries.
 	// any entry after that will add an additional RFOutput
@@ -134,6 +134,8 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 	radioPeriod    = 1.0/radioFrequency; // GHz > ns
 	rfBunchGap     = stoi(parsedSetup[4]);
 
+	double rfoffset = stod(parsedSetup[5]);
+
 
 	// do nothing if timewindow is 0
 	if(timeWindow == 0) {
@@ -142,18 +144,29 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 	}
 
 	// first RF: use seed
-	output.push_back(oneRFOutput(seed, timeWindow, startTime, radioPeriod, rfBunchGap));
+	output.push_back(oneRFOutput(seed, timeWindow, startTime, radioPeriod, rfoffset, rfBunchGap));
 
 	// other signals
 	if(parsedSetup.size() > minNumberOfArguments) {
-		// getting first RF values
-		double oneValue = output[0].getValues().front();
+
 		// total number of RF signals
 		unsigned long remainingNRF = parsedSetup.size() - minNumberOfArguments;
+
+		// if remainingNRF is not a multiple of 2, return
+		if (remainingNRF%2 != 0) {
+			return;
+		}
+		// getting first RF values, subtract original offset
+		double oneValue = output[0].getValues().front() - rfoffset;
+
 		// adding oneRFOutput for each addtional RF signal
-		for(unsigned i=0; i<remainingNRF; i++) {
-			rfBunchDistance.push_back(stoi(parsedSetup[minNumberOfArguments+i]));
-			output.push_back(oneRFOutput(oneValue, rfBunchDistance[i]*radioPeriod, timeWindow, radioPeriod*rfBunchGap));
+		for(unsigned i=0; i<remainingNRF/2; i++) {
+            int j = minNumberOfArguments + 2*i;
+			rfBunchDistance.push_back(stoi(parsedSetup[j]));
+			double thisRfOffset = stod(parsedSetup[j+1]);
+
+			output.push_back(oneRFOutput(oneValue, rfBunchDistance[i]*radioPeriod, timeWindow, thisRfOffset, radioPeriod*rfBunchGap));
 		}
 	}
+
 }

@@ -10,20 +10,18 @@ using namespace std;
 class oneRFOutput {
 public:
     // first RF constructor uses a random number generator, setting seed here
-    oneRFOutput(int seed, double timeWindow, double startTime, double radioPeriod, int rfBunchGap);
+    oneRFOutput(int seed, double timeWindow, double startTime, double radioPeriod, double offset, int rfBunchGap);
 
     // subsequent RFs signals
-    oneRFOutput(double oneRFValue, double rfsTimeDistance, double timeWindow, double intervalBetweenBunches);
+    oneRFOutput(double oneRFValue, double rfsTimeDistance, double timeWindow, double offset, double intervalBetweenBunches);
 
     vector<int> getIDs() { return rfID; }
-
     vector<double> getValues() { return rfValue; }
 
 private:
     vector<int> rfID;
     vector<double> rfValue;
-
-private:
+	double rfoffset;
     void fillRFValues(double firstRF, double timeWindow, double intervalBetweenBunches);
 
     friend ostream &operator<<(ostream &stream, oneRFOutput);
