@@ -97,7 +97,7 @@ ostream &operator<<(ostream &stream, oneRFOutput s)
 //! overloading "<<" to print this class
 ostream &operator<<(ostream &stream, FrequencySyncSignal s)
 {
-    stream << " > RF Signal "   << s.seed;
+    stream << " > RF Signal " ;
     stream << "   - Seed: "   << s.seed;
 	stream << "   - Time Window: "   << s.timeWindow;
 	stream << ", event Start Time: "   << s.startTime << endl;
