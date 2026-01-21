@@ -24,9 +24,11 @@ oneRFOutput::oneRFOutput(int seed, double timeWindow, double startTime, double r
         generator.seed(seed);
     }
 
+	// prepares continuous uniform distribution between -timeWindow/radioPeriod and timeWindow/radioPeriod
 	uniform_real_distribution<> randomDistribution(-timeWindow/radioPeriod, timeWindow/radioPeriod);
 
     // very first RF time
+	// use random engine to generate a random number between -timeWindow/radioPeriod and timeWindow/radioPeriod
 	double firstRF = startTime + offset + radioPeriod*(int)randomDistribution(generator);
 
 	// making sure the first RF is within the timewindow
@@ -86,7 +88,7 @@ void oneRFOutput::fillRFValues(double firstRF, double timeWindow, double interva
 ostream &operator<<(ostream &stream, oneRFOutput s)
 {
 	for(unsigned j=0; j< s.rfID.size(); j++) {
-		stream << "  - RFID: "   << s.rfID[j]  << "   RF offset: " << s.rfoffset << "   RF Value: " << s.rfValue[j] << endl;
+		stream << "       - RFID: "   << s.rfID[j]  << "   RF offset: " << s.rfoffset << "   RF Value: " << s.rfValue[j] << endl;
 	}
 
 	return stream;
@@ -95,18 +97,19 @@ ostream &operator<<(ostream &stream, oneRFOutput s)
 //! overloading "<<" to print this class
 ostream &operator<<(ostream &stream, FrequencySyncSignal s)
 {
-    stream << " Seed: "   << s.seed;
-	stream << " Time Window: "   << s.timeWindow;
+    stream << " > RF Signal "   << s.seed;
+    stream << "   - Seed: "   << s.seed;
+	stream << "   - Time Window: "   << s.timeWindow;
 	stream << ", event Start Time: "   << s.startTime << endl;
-	stream << " Radio Frequency: "   << s.radioFrequency << " MHz: Period is " << s.radioPeriod << "ns" << endl;
-	stream << " Distance between RF bunches "   << s.rfBunchGap*s.radioPeriod << " ns" << endl;
+	stream << "   - Radio Frequency: "   << s.radioFrequency << " GHz: Period is " << s.radioPeriod << "ns" << endl;
+	stream << "   - Distance between RF bunches "   << s.rfBunchGap*s.radioPeriod << " ns" << endl;
 
 	for(unsigned i=0; i<s.rfBunchDistance.size(); i++) {
-		stream << " Additional RF signal n. " << i+2 << " is " <<  s.rfBunchDistance[i]*s.radioPeriod << " ns away." << endl;
+		stream << "   - Additional RF signal n. " << i+2 << " is " <<  s.rfBunchDistance[i]*s.radioPeriod << " ns away." << endl;
 	}
 
 	for(unsigned i=0; i<s.output.size(); i++) {
-		stream << " > RF Output n. " << i+1 << ":" << endl;
+		stream << "    > RF Output n. " << i+1 << ":" << endl;
 		stream << s.output[i] ;
 	}
 
@@ -127,14 +130,13 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 		exit(1);
 	}
 
-    seed           = stoi(parsedSetup[0]);
-	timeWindow     = stod(parsedSetup[1]);
-	startTime      = stod(parsedSetup[2]);
-	radioFrequency = stod(parsedSetup[3]);
-	radioPeriod    = 1.0/radioFrequency; // GHz > ns
-	rfBunchGap     = stoi(parsedSetup[4]);
-
-	double rfoffset = stod(parsedSetup[5]);
+    seed             = stoi(parsedSetup[0]);
+	timeWindow       = stod(parsedSetup[1]);
+	startTime        = stod(parsedSetup[2]);
+	radioFrequency   = stod(parsedSetup[3]); // clock
+	radioPeriod      = 1.0/radioFrequency;   // GHz > ns
+	rfBunchGap       = stoi(parsedSetup[4]); // prescale
+	double rfoffset1 = stod(parsedSetup[5]); // first RF offset
 
 
 	// do nothing if timewindow is 0
@@ -144,20 +146,22 @@ FrequencySyncSignal::FrequencySyncSignal(string setup)
 	}
 
 	// first RF: use seed
-	output.push_back(oneRFOutput(seed, timeWindow, startTime, radioPeriod, rfoffset, rfBunchGap));
+	output.push_back(oneRFOutput(seed, timeWindow, startTime, radioPeriod, rfoffset1, rfBunchGap));
 
 	// other signals
+	// pair of delays between RF signals and RF offsets
 	if(parsedSetup.size() > minNumberOfArguments) {
 
-		// total number of RF signals
+		// total number of RF signals * 2
 		unsigned long remainingNRF = parsedSetup.size() - minNumberOfArguments;
 
 		// if remainingNRF is not a multiple of 2, return
 		if (remainingNRF%2 != 0) {
 			return;
 		}
+
 		// getting first RF values, subtract original offset
-		double oneValue = output[0].getValues().front() - rfoffset;
+		double oneValue = output[0].getValues().front() - rfoffset1;
 
 		// adding oneRFOutput for each addtional RF signal
 		for(unsigned i=0; i<remainingNRF/2; i++) {

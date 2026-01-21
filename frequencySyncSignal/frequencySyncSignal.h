@@ -23,7 +23,6 @@ private:
     vector<double> rfValue;
 	double rfoffset;
     void fillRFValues(double firstRF, double timeWindow, double intervalBetweenBunches);
-
     friend ostream &operator<<(ostream &stream, oneRFOutput);
 
 };
