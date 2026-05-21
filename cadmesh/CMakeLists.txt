@@ -59,7 +59,7 @@ else()
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
         GIT_TAG v6.0.4
-        CMAKE_ARGS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
+        CMAKE_ARGS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR} -DCMAKE_CXX_FLAGS=-Wno-unused-but-set-variable
     )
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
 endif()
